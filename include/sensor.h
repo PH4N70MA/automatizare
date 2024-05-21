@@ -13,35 +13,24 @@ public:
         tmr.setInterval(setPeriod);
     }
 
-    
 
-    float dustDensity()
+
+    int dustDensity()
     {
-        if(!__state) return -1.0;
-                if(tmr.isReady())
-            {
-                digitalWrite(__ledPin,LOW);
-                delayMicroseconds(__SAMPLINGTIME);
+        if(tmr.isReady() && __state)
+        {
+            digitalWrite(__ledPin,LOW);
+            delayMicroseconds(__SAMPLINGTIME);
 
-                __sensorData = analogRead(__dataPin);
+            __sensorData = analogRead(__dataPin);
 
-                delayMicroseconds(__DELTATIME);
-                digitalWrite(__ledPin,HIGH);
+            delayMicroseconds(__DELTATIME);
+            digitalWrite(__ledPin,HIGH);
 
-                // __calcVoltage = __sensorData*(5.0/1024);
-                // __dustDensity = 0.17*__calcVoltage-0.1;
-                
-                return __sensorData;
-
-                // if ( __dustDensity < 0)
-                // {
-                //     return 0.00;
-                // }
-                // else
-                // {
-                //     return __dustDensity;
-                // }
-            }
+            return __sensorData;
+        }
+        else  if (!__state)
+        return -1.0;
     }
 
     void setPeriod(uint16_t prd) 
@@ -49,11 +38,16 @@ public:
       tmr.setInterval(prd);
     }
 
+    void setState(bool state)
+    {
+        __state = state;
+    }
+
 private:
     bool __state = true;
     const byte __ledPin;
     const byte __dataPin;
-    float __calcVoltage, __dustDensity, __sensorData = 0.0;
+    int __sensorData = 0;
     int __DELTATIME = 40, __SAMPLINGTIME = 280;
     GTimer_ms tmr;
 };

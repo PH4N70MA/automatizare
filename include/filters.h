@@ -1,4 +1,4 @@
-#pragma oance
+#pragma once
 #include <Arduino.h>
 
 class RunningAvarageFilter
@@ -14,7 +14,7 @@ public:
         __k = k;
     }
 
-    float expRunningAverage(float newVal)
+    int expRunningAverage(float newVal)
     {
         static float filVal = 0;
         filVal += (newVal - filVal) * __k;

@@ -7,11 +7,11 @@
 
 #define DHT11PIN 5
 float k = 0.2;
-float filteredDustDensity, medianFilterDustDensity;
+int filteredDustDensity, medianFilterDustDensity;
 
 dht11 DHT11;
 
-dustSensor dust(2, A5, 50);
+dustSensor dust(2, A5, 100);
 float lastState = 0.00, dustDensity;
 
 Relay relay(3, 10000);

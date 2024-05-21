@@ -1,16 +1,12 @@
 #include "define.h"
 
-
-
 void setup() 
 {
   Serial.begin(9600);
-  relay.toggleon();
 }
 
 void loop() 
 {
-  relay.blink();
   
 // Dust density
   dustDensity = dust.dustDensity();
@@ -25,17 +21,16 @@ void loop()
     Serial.print("Filtered Dust Density: ");
     Serial.println(medianFilterDustDensity);
   }
-}
-  
-  
+}  
 
 void DHT11_data()
 {
-  float chk = DHT11.read(DHT11PIN);
+  int chk = DHT11.read(DHT11PIN);
+  chk = chk;
 
   Serial.print("Humidity (%): ");
-  Serial.println((float)DHT11.humidity, 2);
+  Serial.println((int)DHT11.humidity);
 
   Serial.print("Temperature  (C): ");
-  Serial.println((float)DHT11.temperature, 2);
+  Serial.println((int)DHT11.temperature);
 }
