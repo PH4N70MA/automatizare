@@ -25,6 +25,9 @@ int relayMode = 2;
 int setpoint = 0;
 bool sliderState = true;
 
+unsigned long lastPingTime = 0;
+const unsigned long pingInterval = 5031;
+
 dht11 DHT11;
 
 dustSensor dust(DUST_LED_PIN, DUST_DATA_PIN, initialPeriod);
@@ -37,10 +40,11 @@ LED ledOk(LED_OK_PIN);
 LED ledError(LED_ERROR_PIN);
 
 
-GTimer parsingTMR(MS, 50);
-GTimer sensorsTMR(MS, 50);
+GTimer parsingTMR(MS, 55);
+GTimer sensorsTMR(MS, 55);
 GTimer runTMR(MS);
 GTimer restTMR(MS);
+GTimer errorTMR(MS, pingInterval);
 
 RunningAvarageFilter averegeFilterDust(k);
 MedianFilter medianFilterDust(MEDIAN_FILTER_LEVEL);

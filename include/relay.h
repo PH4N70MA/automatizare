@@ -25,6 +25,15 @@ public:
       return __state;
     }
 
+    bool getManualState() {
+      return __manualFlag;
+    }
+
+    void toggleLastState()
+    {
+      digitalWrite(__pin, __manualFlag);
+    }
+
     void setHyster(int setHyster) {
       __hyster = setHyster;
     } 
@@ -63,13 +72,15 @@ public:
 
     void manualControll()
     {
-      if (__sliderState && !__state)
+      if (__sliderState && !__manualFlag)
       {
-        toggleon();
+        __manualFlag = !__manualFlag;
+        digitalWrite(__pin, __manualFlag);
       }
-      else if (!__sliderState && __state)
+      else if (!__sliderState && __manualFlag)
       {
-        toggleoff();
+        __manualFlag = !__manualFlag;
+        digitalWrite(__pin, __manualFlag);
       }
     }
 
@@ -77,11 +88,11 @@ public:
     {
       if (sensorData >= __setPoint + __hyster)
       {
-        toggleon();
+        digitalWrite(__pin, true);
       }
       else if (sensorData <= __setPoint - __hyster)
       {
-        toggleoff();
+        digitalWrite(__pin, false);
       }
     }
 
@@ -112,7 +123,7 @@ public:
 private:
     const byte __pin;
     float __runPeriod, __restPeriod;
-    bool __flag = true, __state = false, __sliderState = false;
+    bool __flag = true, __manualFlag = false, __state = false, __sliderState = false;
     GTimer_ms runTMR, restTMR;
     int __hyster = 50, __setPoint = 200;
 };
