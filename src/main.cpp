@@ -2,13 +2,13 @@
 
 void setup() 
 {
-  Serial.begin(9600);
+  Serial.begin(INITIAL_DELAY);
 }
 
 void loop() 
 {
 
-  if (sensorsTMR.isReady())
+  if (sensorsTMR.isReady())                           //prelucreaza datele de la senzori la fiecare 50ms
   {
     Prelucrare();
   }
@@ -31,13 +31,11 @@ void loop()
     break;
   }
 
-
-  if (parsingTMR.isReady())
+  if (parsingTMR.isReady())                           //Comunicarea dintre dispozitive prin serial
   {
-    parsing();
-    serialAvailable();
+    parsing();                                        //transmite datele catre serial
+    serialData();                                     //preluarea datelor de la serial
   }
-  
 }  
 
 void parsing()
@@ -56,7 +54,7 @@ void Prelucrare()
     chk = chk;
   }
 
-void serialAvailable()
+void serialData()
 {
       if(Serial.available() > 1)
     {
