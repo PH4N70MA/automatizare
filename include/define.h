@@ -10,12 +10,15 @@ float k = 0.2;
 int workingTIME, restTIME;
 int filteredDustDensity, medianFilterDustDensity;
 
+int relayMode = 2;
+bool sliderState = true;
+
 dht11 DHT11;
 
 dustSensor dust(2, A5, 50);
 float lastState = 0.00, dustDensity;
 
-Relay relay(3, 10000);
+Relay relay(3, 1, 1);
 
 GTimer parsingTMR(MS, 50);
 GTimer sensorsTMR(MS, 50);
@@ -29,4 +32,3 @@ MedianFilter medianFilterDust(3);
 
 void Prelucrare();
 void parsing();
-void relayControl();

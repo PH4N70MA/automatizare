@@ -5,29 +5,83 @@
 class Relay
 {
 public:
-    Relay(byte pin, int period) : __pin(pin), __period(period)
+    Relay(byte pin, int runPeriod, int restPeriod) : __pin(pin), __runPeriod(runPeriod), __restPeriod(restPeriod)
     {
         pinMode(__pin, OUTPUT);
         digitalWrite(__pin, false);
-        tmr.setInterval(__period);
+        runTMR.setInterval(__runPeriod*1000*60);    //valori de test
+        restTMR.setInterval(__restPeriod*1000*60); //valori de test
     }
 
-    void setPeriod(uint16_t prd) {
-      tmr.setInterval(prd);
+    void setRunPeriod(uint16_t prd) {
+      runTMR.setInterval(prd*1000*60*60);
+    }
+
+    void setRestPeriod(uint16_t prd) {
+      restTMR.setInterval(prd*1000*60);
     }
 
     bool getState() {
       return __state;
     }
 
-    void blink() {
+    void setHyster(int setHyster) {
+      __hyster = setHyster;
+    } 
+
+    void setPoint(int setPoint) {
+      __setPoint = setPoint;
+    }
+
+    void autocontroll() {
       if (__state) {
-        if (tmr.isReady()) {
+        if(runTMR.isReady() && __flag)
+        {
           __flag = !__flag;
           digitalWrite(__pin, __flag);
+          restTMR.reset();
+        }
+        if(restTMR.isReady() && !__flag)
+        {
+          __flag = !__flag;
+          digitalWrite(__pin, __flag);
+          runTMR.reset();
         }
       } else {
-        if (__flag) digitalWrite(__pin, false);
+        if (__flag) 
+        {
+          digitalWrite(__pin, false);
+          runTMR.reset();
+          restTMR.reset();
+        }
+      }
+    }
+
+    void setSliderState(bool sliderState) {
+      __sliderState = sliderState;
+    }
+
+    void manualControll()
+    {
+      if (__sliderState && !__state)
+      {
+        toggleon();
+      }
+      else if (!__sliderState && __state)
+      {
+        toggleoff();
+      }
+    }
+
+    void sensorControll( int sensorData)
+    {
+      if (sensorData > __setPoint + __hyster)
+      {
+        toggleon();
+      }
+      else if (sensorData < __setPoint - __hyster)
+      {
+        toggleoff();
       }
     }
 
@@ -35,23 +89,30 @@ public:
     {
       __state = !__state;
       digitalWrite(__pin, __state);
+      runTMR.reset();
+      restTMR.reset();
     }
 
     void toggleoff()
     {
       __state = false;
       digitalWrite(__pin, __state);
+      runTMR.reset();
+      restTMR.reset();
     }
 
     void toggleon()
     {
       __state = true;
       digitalWrite(__pin, __state);
+      runTMR.reset();
+      restTMR.reset();
     }
 
 private:
     const byte __pin;
-    float __period;
-    bool __flag = false, __state = false;
-    GTimer_ms tmr;
+    float __runPeriod, __restPeriod;
+    bool __flag = true, __state = false, __sliderState = false;
+    GTimer_ms runTMR, restTMR;
+    int __hyster = 50, __setPoint = 200;
 };

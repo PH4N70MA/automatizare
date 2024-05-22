@@ -1,44 +1,54 @@
 #include "define.h"
 
-
-
 void setup() 
 {
   Serial.begin(9600);
-
-  workingTIME = 500;
-  restTIME = 10000;
-
-  runTMR.setInterval(workingTIME);
-  restTMR.setInterval(restTIME);
-  relay.toggleon();
 
 }
 
 void loop() 
 {
-  relayControl();
 
   if (sensorsTMR.isReady())
   {
     Prelucrare();
   }
 
+  switch (relayMode)
+  {
+  case 0:
+    relay.autocontroll();
+    break;
+  case 1:
+    relay.sensorControll(medianFilterDustDensity);
+  case 2:
+    relay.manualControll();
+    break;
+  default:
+    break;
+  }
+
+
   if (parsingTMR.isReady())
   {
     parsing();
+
+    //parsing
+    if(Serial.available())
+    {
+      char c = Serial.read();
+      if(c == 'W')
+      {
+        relay.setSliderState(true);
+      }
+      if(c == 'F')
+      {
+        relay.setSliderState(false);
+      }
+    }
   }
   
 }  
-
-void Prelucrare()
-{
-  dustDensity = dust.dustDensity();
-  filteredDustDensity = averegeFilterDust.expRunningAverage(dustDensity);
-  medianFilterDustDensity = medianFilterDust.median(filteredDustDensity);
-  int chk = DHT11.read(DHT11PIN);
-  chk = chk;
-}
 
 void parsing()
 {
@@ -47,16 +57,11 @@ void parsing()
   Serial.print("P:"); Serial.println(medianFilterDustDensity);
 }
 
-void relayControl()
-{
-  if(runTMR.isReady() && relay.getState())
+void Prelucrare()
   {
-    relay.toggleoff();
-    restTMR.reset();
+    dustDensity = dust.dustDensity();
+    filteredDustDensity = averegeFilterDust.expRunningAverage(dustDensity);
+    medianFilterDustDensity = medianFilterDust.median(filteredDustDensity);
+    int chk = DHT11.read(DHT11PIN);
+    chk = chk;
   }
-  if(restTMR.isReady() && !relay.getState())
-  {
-    relay.toggleon();
-    runTMR.reset();
-  }
-}
