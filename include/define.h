@@ -4,12 +4,15 @@
 #include "Arduino.h"
 #include "dht11.h"
 #include "filters.h"
+#include "led.h"
 
 #define DHT11PIN 5
 #define DUST_LED_PIN 2
 #define DUST_DATA_PIN A5
 #define RELAY_PIN 3
 #define RELAY_COLLER_PIN 4
+#define LED_OK_PIN 6
+#define LED_ERROR_PIN 7
 #define MEDIAN_FILTER_LEVEL 3
 #define INITIAL_DELAY 9600
 #define CRITICAL_TEMP 30
@@ -29,6 +32,9 @@ float lastState = 0.00, dustDensity;
 
 Relay relay(RELAY_PIN, workingTIME, restTIME);
 Relay cooler(RELAY_COLLER_PIN, 1, 1);
+
+LED ledOk(LED_OK_PIN);
+LED ledError(LED_ERROR_PIN);
 
 
 GTimer parsingTMR(MS, 50);

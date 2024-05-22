@@ -9,8 +9,8 @@ public:
     {
         pinMode(__pin, OUTPUT);
         digitalWrite(__pin, false);
-        runTMR.setInterval(__runPeriod*1000*60);    
-        restTMR.setInterval(__restPeriod*1000*60); 
+        runTMR.setInterval(__runPeriod*1000);    
+        restTMR.setInterval(__restPeriod*1000); 
     }
 
     void setRunPeriod(uint16_t prd) {
