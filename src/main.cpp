@@ -3,7 +3,6 @@
 void setup() 
 {
   Serial.begin(9600);
-
 }
 
 void loop() 
@@ -16,14 +15,18 @@ void loop()
 
   switch (relayMode)
   {
-  case 0:
-    relay.autocontroll();
+  case 1:                                             //modul automat. Lucreaza dupa timpi setati
+    relay.autoControll();
     break;
-  case 1:
-    relay.sensorControll(medianFilterDustDensity);
+
   case 2:
-    relay.manualControll();
+    relay.manualControll();                           //modul manual. Lucreaza dupa comanda primita de la serial
     break;
+
+  case 3:                                             //modul sensor. Lucreaza dupa valoarea senzorului prin hysterisis
+    relay.sensorControll(medianFilterDustDensity);
+    break;
+
   default:
     break;
   }
@@ -32,20 +35,7 @@ void loop()
   if (parsingTMR.isReady())
   {
     parsing();
-
-    //parsing
-    if(Serial.available())
-    {
-      char c = Serial.read();
-      if(c == 'W')
-      {
-        relay.setSliderState(true);
-      }
-      if(c == 'F')
-      {
-        relay.setSliderState(false);
-      }
-    }
+    serialAvailable();
   }
   
 }  
@@ -65,3 +55,41 @@ void Prelucrare()
     int chk = DHT11.read(DHT11PIN);
     chk = chk;
   }
+
+void serialAvailable()
+{
+      if(Serial.available() > 1)
+    {
+      String data = Serial.readStringUntil('\n');
+      data.trim();
+      if (data.startsWith("W")) 
+      {
+        workingTIME = data.substring(1).toFloat();
+        relay.setRunPeriod(workingTIME);
+      } 
+      else if (data.startsWith("R")) 
+      {
+        restTIME = data.substring(1).toFloat();
+        relay.setRestPeriod(restTIME);
+      } 
+      else if (data.startsWith("T"))
+      {
+        relayMode = data.substring(1).toFloat();
+        if (relayMode == 1)
+        {
+          relay.toggleon();
+        }
+      }
+      else if (data.startsWith("M"))
+      {
+        sliderState = data.substring(1).toFloat();
+        relay.setSliderState(sliderState);
+      }
+      else if (data.startsWith("S"))
+      {
+        setpoint = data.substring(1).toFloat();
+        finalDustDensity = ((setpoint*640)/100)+100;
+        relay.setPoint(finalDustDensity);
+      }
+    }
+}

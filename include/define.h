@@ -8,9 +8,10 @@
 #define DHT11PIN 5
 float k = 0.2;
 int workingTIME, restTIME;
-int filteredDustDensity, medianFilterDustDensity;
+int filteredDustDensity, medianFilterDustDensity, finalDustDensity;
 
 int relayMode = 2;
+int setpoint = 0;
 bool sliderState = true;
 
 dht11 DHT11;
@@ -32,3 +33,4 @@ MedianFilter medianFilterDust(3);
 
 void Prelucrare();
 void parsing();
+void serialAvailable();

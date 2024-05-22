@@ -9,16 +9,16 @@ public:
     {
         pinMode(__pin, OUTPUT);
         digitalWrite(__pin, false);
-        runTMR.setInterval(__runPeriod*1000*60);    //valori de test
-        restTMR.setInterval(__restPeriod*1000*60); //valori de test
+        runTMR.setInterval(__runPeriod*1000*60);    
+        restTMR.setInterval(__restPeriod*1000*60); 
     }
 
     void setRunPeriod(uint16_t prd) {
-      runTMR.setInterval(prd*1000*60*60);
+      runTMR.setInterval(prd*1000);
     }
 
     void setRestPeriod(uint16_t prd) {
-      restTMR.setInterval(prd*1000*60);
+      restTMR.setInterval(prd*1000);
     }
 
     bool getState() {
@@ -33,7 +33,7 @@ public:
       __setPoint = setPoint;
     }
 
-    void autocontroll() {
+    void autoControll() {
       if (__state) {
         if(runTMR.isReady() && __flag)
         {
