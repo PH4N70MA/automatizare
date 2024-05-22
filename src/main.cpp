@@ -3,6 +3,8 @@
 void setup() 
 {
   Serial.begin(INITIAL_DELAY);
+  cooler.setHyster(CRITICAL_HYSTER);
+  cooler.setPoint(CRITICAL_TEMP);
 }
 
 void loop() 
@@ -12,6 +14,8 @@ void loop()
   {
     Prelucrare();
   }
+
+  cooler.sensorControll((int)DHT11.temperature);      //modul cooler. Lucreaza dupa valoarea senzorului prin hysterisis
 
   switch (relayMode)
   {

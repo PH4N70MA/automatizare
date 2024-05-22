@@ -75,11 +75,11 @@ public:
 
     void sensorControll( int sensorData)
     {
-      if (sensorData > __setPoint + __hyster)
+      if (sensorData >= __setPoint + __hyster)
       {
         toggleon();
       }
-      else if (sensorData < __setPoint - __hyster)
+      else if (sensorData <= __setPoint - __hyster)
       {
         toggleoff();
       }

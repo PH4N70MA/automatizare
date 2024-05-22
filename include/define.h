@@ -9,8 +9,11 @@
 #define DUST_LED_PIN 2
 #define DUST_DATA_PIN A5
 #define RELAY_PIN 3
+#define RELAY_COLLER_PIN 4
 #define MEDIAN_FILTER_LEVEL 3
 #define INITIAL_DELAY 9600
+#define CRITICAL_TEMP 30
+#define CRITICAL_HYSTER 2
 float k = 0.2;
 int workingTIME = 1, restTIME = 1, initialPeriod = 50;
 int filteredDustDensity, medianFilterDustDensity, finalDustDensity;
@@ -25,6 +28,8 @@ dustSensor dust(DUST_LED_PIN, DUST_DATA_PIN, initialPeriod);
 float lastState = 0.00, dustDensity;
 
 Relay relay(RELAY_PIN, workingTIME, restTIME);
+Relay cooler(RELAY_COLLER_PIN, 1, 1);
+
 
 GTimer parsingTMR(MS, 50);
 GTimer sensorsTMR(MS, 50);
